@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Rashan – Smart Grocery List & Budget Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1a237e;
+  --navy-dark: #0d1257;
+  --gold: #f5a623;
+  --gold-dark: #e09010;
+  --green: #2e7d32;
+  --green-btn: #388e3c;
+  --teal: #00838f;
+  --orange: #e65100;
+  --bg: #f4f6fb;
+  --white: #ffffff;
+  --text: #1a1a2e;
+  --text-muted: #5a6080;
+  --radius: 20px;
+  --shadow: 0 8px 40px rgba(26,35,126,0.13);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Nunito', 'Noto Sans Devanagari', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* NAV */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:100;
+  background: rgba(13,18,87,0.97);
+  backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 48px;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.18);
+}
+.nav-logo { font-size: 1.7rem; font-weight: 900; color: #fff; text-decoration: none; }
+.nav-logo span { color: var(--gold); }
+.nav-links { display:flex; gap:28px; list-style:none; }
+.nav-links a { color: rgba(255,255,255,0.82); text-decoration:none; font-size: 0.95rem; font-weight: 600; transition: color 0.2s; }
+.nav-links a:hover { color: var(--gold); }
+.nav-cta { background: var(--gold); color: var(--navy-dark) !important; padding: 9px 22px; border-radius: 50px; font-weight: 800 !important; }
+.hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; }
+.hamburger span { width:25px; height:3px; background:#fff; border-radius:3px; }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0d1257 0%, #1a237e 55%, #1565c0 100%);
+  display: flex; flex-direction: column;
+  position: relative; overflow: hidden; padding-top: 72px;
+}
+.hero-orb1 { position:absolute; width:550px; height:550px; border-radius:50%; background: radial-gradient(circle, rgba(245,166,35,0.14) 0%, transparent 70%); top:-120px; right:-120px; animation: orb 7s ease-in-out infinite; }
+.hero-orb2 { position:absolute; width:380px; height:380px; border-radius:50%; background: radial-gradient(circle, rgba(46,125,50,0.12) 0%, transparent 70%); bottom:-80px; left:-80px; animation: orb 9s ease-in-out infinite reverse; }
+@keyframes orb { 0%,100%{transform:scale(1) translateY(0);} 50%{transform:scale(1.1) translateY(-20px);} }
+.hero-inner { flex:1; display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; padding:60px 48px; gap:48px; position:relative; z-index:5; }
+.hero-left { flex:1; }
+.hero-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(245,166,35,0.15); border:1.5px solid rgba(245,166,35,0.4); color:var(--gold); font-size:0.78rem; font-weight:700; padding:6px 16px; border-radius:50px; text-transform:uppercase; letter-spacing:1px; margin-bottom:24px; }
+.hero h1 { font-size:clamp(2.4rem,4.5vw,3.8rem); font-weight:900; color:#fff; line-height:1.15; margin-bottom:10px; }
+.hero h1 .e { color:var(--gold); }
+.hero-hindi { font-size:1.4rem; color:var(--gold); font-weight:700; margin-bottom:20px; font-family:'Noto Sans Devanagari',sans-serif; }
+.hero-desc { font-size:1.1rem; color:rgba(255,255,255,0.78); line-height:1.7; margin-bottom:36px; max-width:500px; }
+.hero-desc strong { color:var(--gold); }
+.hero-btns { display:flex; gap:16px; flex-wrap:wrap; }
+.btn-play { display:inline-flex; align-items:center; gap:10px; background:var(--green-btn); color:#fff; padding:14px 28px; border-radius:50px; font-size:1rem; font-weight:800; text-decoration:none; box-shadow:0 4px 20px rgba(56,142,60,0.4); transition:transform 0.2s,box-shadow 0.2s; }
+.btn-play:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(56,142,60,0.5); }
+.btn-learn { display:inline-flex; align-items:center; gap:8px; border:2px solid rgba(255,255,255,0.35); color:#fff; padding:13px 28px; border-radius:50px; font-size:1rem; font-weight:700; text-decoration:none; transition:border-color 0.2s,background 0.2s; }
+.btn-learn:hover { border-color:var(--gold); background:rgba(245,166,35,0.08); }
+.hero-stats { display:flex; gap:32px; margin-top:48px; flex-wrap:wrap; }
+.stat-num { font-size:1.8rem; font-weight:900; color:var(--gold); }
+.stat-label { font-size:0.82rem; color:rgba(255,255,255,0.6); font-weight:600; }
+.hero-right { flex:0 0 320px; display:flex; justify-content:center; }
+.phone-wrap { width:270px; background:#fff; border-radius:44px; padding:12px; box-shadow:0 24px 80px rgba(0,0,0,0.4),0 0 0 2px rgba(255,255,255,0.15); animation:float 4s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-14px);} }
+.phone-screen { background:#0d1257; border-radius:36px; overflow:hidden; }
+.phone-status { background:#0d1257; padding:10px 20px 6px; display:flex; justify-content:space-between; font-size:0.65rem; color:rgba(255,255,255,0.6); font-weight:700; }
+.phone-header { background:#0d1257; padding:8px 16px 12px; display:flex; align-items:center; justify-content:space-between; }
+.phone-logo { font-size:1.1rem; font-weight:900; color:#fff; }
+.phone-logo span { color:var(--gold); }
+.phone-budget { font-size:0.7rem; color:var(--gold); font-weight:700; }
+.phone-bar { background:var(--green); padding:8px 16px; display:flex; align-items:center; justify-content:space-between; }
+.phone-bar-txt { font-size:0.68rem; color:#fff; font-weight:700; }
+.phone-bar-amt { font-size:0.78rem; color:var(--gold); font-weight:900; }
+.phone-body { background:#f4f6fb; padding:12px; }
+.phone-item { background:#fff; border-radius:12px; padding:10px 12px; display:flex; align-items:center; gap:8px; margin-bottom:8px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.phone-item-check { width:20px; height:20px; border-radius:5px; background:var(--green); display:flex; align-items:center; justify-content:center; font-size:0.65rem; color:#fff; flex-shrink:0; }
+.phone-item-name { font-size:0.72rem; font-weight:700; color:#1a237e; flex:1; font-family:'Noto Sans Devanagari',sans-serif; }
+.phone-item-price { font-size:0.68rem; color:var(--green); font-weight:800; }
+.phone-total { background:#0d1257; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; }
+.phone-total-txt { font-size:0.72rem; color:var(--gold); font-weight:800; font-family:'Noto Sans Devanagari',sans-serif; }
+.phone-total-amt { font-size:0.9rem; color:var(--gold); font-weight:900; }
+.phone-actions { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; padding:8px 12px; background:#f4f6fb; }
+.phone-act { border-radius:10px; padding:8px 4px; font-size:0.6rem; font-weight:800; text-align:center; color:#fff; font-family:'Noto Sans Devanagari',sans-serif; }
+.phone-act.green { background:var(--green); }
+.phone-act.teal { background:var(--teal); }
+.phone-act.dark { background:#2e7d32; }
+.phone-nav { background:#0d1257; padding:10px 0; display:grid; grid-template-columns:repeat(5,1fr); text-align:center; }
+.phone-nav-item { font-size:0.52rem; color:rgba(255,255,255,0.5); font-weight:600; }
+.phone-nav-item.active { color:var(--gold); }
+.hero-wave { position:relative; z-index:4; line-height:0; }
+.hero-wave svg { display:block; width:100%; }
+
+/* STRIP */
+.features-strip { background:var(--white); padding:28px 48px; display:flex; align-items:center; justify-content:center; gap:48px; flex-wrap:wrap; box-shadow:0 4px 24px rgba(26,35,126,0.07); }
+.strip-item { display:flex; align-items:center; gap:10px; font-size:0.9rem; font-weight:700; color:var(--navy); }
+.strip-icon { font-size:1.4rem; }
+
+/* SECTIONS */
+section { padding:96px 48px; }
+.section-inner { max-width:1200px; margin:0 auto; }
+.section-tag { display:inline-block; background:rgba(26,35,126,0.08); color:var(--navy); font-size:0.75rem; font-weight:800; padding:5px 16px; border-radius:50px; text-transform:uppercase; letter-spacing:1px; margin-bottom:14px; }
+.section-title { font-size:clamp(1.9rem,3.5vw,2.8rem); font-weight:900; line-height:1.2; margin-bottom:16px; color:var(--navy-dark); }
+.section-title span { color:var(--gold); }
+.section-sub { font-size:1.05rem; color:var(--text-muted); line-height:1.7; max-width:580px; }
+
+/* ABOUT */
+.about { background:#fff; }
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center; }
+.about-image { border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); position:relative; }
+.about-image img { width:100%; display:block; border-radius:var(--radius); }
+.about-image-badge { position:absolute; bottom:20px; left:20px; background:var(--navy); color:#fff; border-radius:14px; padding:10px 18px; font-size:0.82rem; font-weight:800; box-shadow:0 4px 16px rgba(0,0,0,0.25); }
+.about-image-badge span { color:var(--gold); }
+.about-features { margin-top:32px; display:flex; flex-direction:column; gap:16px; }
+.about-feat { display:flex; align-items:flex-start; gap:14px; padding:16px 20px; border-radius:14px; background:var(--bg); transition:transform 0.2s,box-shadow 0.2s; }
+.about-feat:hover { transform:translateX(6px); box-shadow:var(--shadow); }
+.feat-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; }
+.feat-icon.gold { background:rgba(245,166,35,0.15); }
+.feat-icon.green { background:rgba(46,125,50,0.12); }
+.feat-icon.teal { background:rgba(0,131,143,0.12); }
+.feat-icon.navy { background:rgba(26,35,126,0.1); }
+.feat-text h4 { font-size:0.95rem; font-weight:800; color:var(--navy-dark); margin-bottom:3px; }
+.feat-text p { font-size:0.85rem; color:var(--text-muted); line-height:1.5; }
+
+/* FEATURES GRID */
+.features { background:var(--bg); }
+.features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:56px; }
+.feat-card { background:#fff; border-radius:var(--radius); padding:32px 28px; box-shadow:var(--shadow); transition:transform 0.25s,box-shadow 0.25s; position:relative; overflow:hidden; }
+.feat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; }
+.feat-card.c1::before { background:var(--gold); }
+.feat-card.c2::before { background:var(--green); }
+.feat-card.c3::before { background:var(--teal); }
+.feat-card.c4::before { background:var(--orange); }
+.feat-card.c5::before { background:var(--navy); }
+.feat-card.c6::before { background:#8e24aa; }
+.feat-card:hover { transform:translateY(-6px); box-shadow:0 16px 48px rgba(26,35,126,0.16); }
+.feat-card-icon { width:56px; height:56px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:1.6rem; margin-bottom:20px; }
+.feat-card.c1 .feat-card-icon { background:rgba(245,166,35,0.12); }
+.feat-card.c2 .feat-card-icon { background:rgba(46,125,50,0.1); }
+.feat-card.c3 .feat-card-icon { background:rgba(0,131,143,0.1); }
+.feat-card.c4 .feat-card-icon { background:rgba(230,81,0,0.1); }
+.feat-card.c5 .feat-card-icon { background:rgba(26,35,126,0.08); }
+.feat-card.c6 .feat-card-icon { background:rgba(142,36,170,0.1); }
+.feat-card h3 { font-size:1.05rem; font-weight:800; color:var(--navy-dark); margin-bottom:10px; }
+.feat-card p { font-size:0.88rem; color:var(--text-muted); line-height:1.65; }
+
+/* HOW IT WORKS */
+.how { background:var(--navy-dark); }
+.how .section-tag { background:rgba(245,166,35,0.15); color:var(--gold); }
+.how .section-title { color:#fff; }
+.how .section-sub { color:rgba(255,255,255,0.65); }
+.steps { display:grid; grid-template-columns:repeat(4,1fr); gap:32px; margin-top:56px; position:relative; }
+.steps::before { content:''; position:absolute; top:36px; left:12%; right:12%; height:2px; background:linear-gradient(90deg,var(--gold),rgba(245,166,35,0.2)); }
+.step { text-align:center; position:relative; z-index:1; }
+.step-num { width:72px; height:72px; border-radius:50%; background:var(--gold); color:var(--navy-dark); font-size:1.5rem; font-weight:900; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; box-shadow:0 4px 20px rgba(245,166,35,0.4); }
+.step h4 { font-size:0.95rem; font-weight:800; color:#fff; margin-bottom:10px; }
+.step p { font-size:0.83rem; color:rgba(255,255,255,0.6); line-height:1.6; }
+
+/* SCREENSHOTS */
+.screens { background:var(--bg); }
+.screens-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:56px; }
+.screen-card { background:#fff; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); transition:transform 0.25s; }
+.screen-card:hover { transform:translateY(-6px) scale(1.02); }
+.screen-shot { background:var(--navy-dark); min-height:280px; display:flex; align-items:center; justify-content:center; padding:20px; }
+.mini-screen { width:130px; background:#fff; border-radius:24px; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.35); }
+.mini-header { background:var(--navy-dark); padding:8px 10px; }
+.mini-green-bar { background:var(--green); padding:5px 10px; display:flex; justify-content:space-between; }
+.mini-bar-txt { font-size:0.48rem; color:#fff; font-weight:700; font-family:'Noto Sans Devanagari',sans-serif; }
+.mini-bar-amt { font-size:0.58rem; color:var(--gold); font-weight:900; }
+.mini-body { padding:8px; background:#f4f6fb; }
+.mini-item { background:#fff; border-radius:7px; padding:5px 7px; margin-bottom:5px; display:flex; align-items:center; gap:5px; }
+.mini-check { width:11px; height:11px; background:var(--green); border-radius:3px; flex-shrink:0; }
+.mini-name { font-size:0.44rem; font-weight:700; color:var(--navy); font-family:'Noto Sans Devanagari',sans-serif; flex:1; }
+.mini-price { font-size:0.44rem; color:var(--green); font-weight:800; }
+.mini-footer { background:var(--navy-dark); padding:6px 10px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px; }
+.mini-btn { border-radius:6px; padding:4px 2px; font-size:0.4rem; font-weight:800; color:#fff; text-align:center; font-family:'Noto Sans Devanagari',sans-serif; }
+.mini-btn.g { background:var(--green); }
+.mini-btn.t { background:var(--teal); }
+.mini-btn.d { background:#2e7d32; }
+.screen-label { padding:16px 20px; }
+.screen-label h4 { font-size:0.92rem; font-weight:800; color:var(--navy-dark); margin-bottom:4px; }
+.screen-label p { font-size:0.8rem; color:var(--text-muted); }
+
+/* TESTIMONIALS */
+.testimonials { background:#fff; }
+.testi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:56px; }
+.testi-card { background:var(--bg); border-radius:var(--radius); padding:28px 24px; border-left:4px solid var(--gold); }
+.testi-stars { color:var(--gold); font-size:1rem; margin-bottom:12px; }
+.testi-text { font-size:0.9rem; color:var(--text); line-height:1.7; margin-bottom:18px; font-style:italic; }
+.testi-author { display:flex; align-items:center; gap:12px; }
+.testi-avatar { width:42px; height:42px; border-radius:50%; font-size:1.1rem; display:flex; align-items:center; justify-content:center; font-weight:900; color:#fff; }
+.ta1 { background:var(--navy); } .ta2 { background:var(--green); } .ta3 { background:var(--teal); }
+.testi-name { font-size:0.88rem; font-weight:800; color:var(--navy-dark); }
+.testi-loc { font-size:0.77rem; color:var(--text-muted); }
+
+/* DOWNLOAD */
+.download { background:linear-gradient(135deg,#0d1257 0%,#1a237e 60%,#1565c0 100%); text-align:center; position:relative; overflow:hidden; }
+.download .section-tag { background:rgba(245,166,35,0.2); color:var(--gold); }
+.download .section-title { color:#fff; }
+.download .section-sub { color:rgba(255,255,255,0.7); margin:0 auto 40px; }
+.dl-btns { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; }
+.dl-btn-main { display:inline-flex; align-items:center; gap:12px; background:var(--green-btn); color:#fff; padding:16px 36px; border-radius:50px; font-size:1.05rem; font-weight:800; text-decoration:none; box-shadow:0 4px 24px rgba(56,142,60,0.45); transition:transform 0.2s,box-shadow 0.2s; }
+.dl-btn-main:hover { transform:translateY(-3px); box-shadow:0 10px 36px rgba(56,142,60,0.55); }
+.dl-badge { display:inline-flex; align-items:center; gap:12px; background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.25); color:#fff; padding:16px 36px; border-radius:50px; font-size:1rem; font-weight:700; text-decoration:none; transition:background 0.2s; }
+.dl-badge:hover { background:rgba(255,255,255,0.18); }
+.dl-features { display:flex; gap:32px; justify-content:center; margin-top:48px; flex-wrap:wrap; }
+.dl-feat { text-align:center; color:rgba(255,255,255,0.8); font-size:0.88rem; font-weight:600; }
+.dl-feat-icon { font-size:1.6rem; margin-bottom:8px; display:block; }
+
+/* FOOTER */
+footer { background:#070d3a; padding:48px; text-align:center; }
+.footer-logo { font-size:1.6rem; font-weight:900; color:#fff; margin-bottom:8px; }
+.footer-logo span { color:var(--gold); }
+.footer-tagline { font-size:0.85rem; color:rgba(255,255,255,0.5); margin-bottom:24px; font-family:'Noto Sans Devanagari',sans-serif; }
+.footer-links { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; margin-bottom:24px; }
+.footer-links a { color:rgba(255,255,255,0.55); text-decoration:none; font-size:0.85rem; font-weight:600; transition:color 0.2s; }
+.footer-links a:hover { color:var(--gold); }
+.footer-bottom { font-size:0.8rem; color:rgba(255,255,255,0.3); }
+.footer-bottom span { color:var(--gold); }
+
+/* RESPONSIVE */
+@media(max-width:1024px) {
+  .features-grid { grid-template-columns:repeat(2,1fr); }
+  .steps { grid-template-columns:repeat(2,1fr); }
+  .steps::before { display:none; }
+  .screens-grid { grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:768px) {
+  nav { padding:14px 20px; }
+  .nav-links { display:none; }
+  .hamburger { display:flex; }
+  .hero-inner { flex-direction:column; padding:32px 20px; text-align:center; }
+  .hero-right { display:none; }
+  .hero-stats { justify-content:center; }
+  section { padding:64px 20px; }
+  .about-grid { grid-template-columns:1fr; }
+  .features-grid { grid-template-columns:1fr; }
+  .testi-grid { grid-template-columns:1fr; }
+  .features-strip { padding:20px; gap:24px; }
+}
+@media(max-width:480px) {
+  .screens-grid { grid-template-columns:1fr; }
+  .steps { grid-template-columns:1fr; }
+}
+
+/* ANIMATIONS */
+.fade-up { opacity:0; transform:translateY(30px); transition:opacity 0.6s ease,transform 0.6s ease; }
+.fade-up.visible { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo"><span>E</span>-Rashan</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#screens">Screenshots</a></li>
+    <li><a href="https://play.google.com/store/apps/details?id=com.chhavi.e_rashan&hl=en_IN" target="_blank" class="nav-cta">Download Free</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orb1"></div>
+  <div class="hero-orb2"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge">🛒 v1.0 — Now on Google Play</div>
+      <h1><span class="e">E</span>-Rashan</h1>
+      <div class="hero-hindi">ई-राशन · Smart Grocery List</div>
+      <p class="hero-desc">India's smartest <strong>grocery list & budget manager</strong>. Plan your ration, track prices, share with your shopkeeper via QR, and never overspend again.</p>
+      <div class="hero-btns">
+        <a href="https://play.google.com/store/apps/details?id=com.chhavi.e_rashan&hl=en_IN" target="_blank" class="btn-play">▶ &nbsp;Get it on Google Play</a>
+        <a href="#features" class="btn-learn">Explore Features →</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">100+</div><div class="stat-label">Grocery Items</div></div>
+        <div class="stat"><div class="stat-num">8</div><div class="stat-label">Categories</div></div>
+        <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Free & Offline</div></div>
+        <div class="stat"><div class="stat-num">🚫</div><div class="stat-label">No Ads · No Login</div></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="phone-wrap">
+        <div class="phone-screen">
+          <div class="phone-status"><span>9:41</span><span>📶 🔋</span></div>
+          <div class="phone-header">
+            <div class="phone-logo"><span>E</span>-राशन</div>
+            <div class="phone-budget">💰 बजट</div>
+          </div>
+          <div class="phone-bar">
+            <div class="phone-bar-txt">✅ चुने गए: 6</div>
+            <div class="phone-bar-amt">₹7963</div>
+          </div>
+          <div class="phone-body">
+            <div class="phone-item"><div class="phone-item-check">✓</div><div class="phone-item-name">🫘 उड़द दाल</div><div class="phone-item-price">₹50</div></div>
+            <div class="phone-item"><div class="phone-item-check">✓</div><div class="phone-item-name">🟢 मूंग दाल</div><div class="phone-item-price">₹150</div></div>
+            <div class="phone-item"><div class="phone-item-check">✓</div><div class="phone-item-name">🌾 बेसन</div><div class="phone-item-price">₹250</div></div>
+            <div class="phone-item"><div class="phone-item-check">✓</div><div class="phone-item-name">🌿 दालचीनी</div><div class="phone-item-price">₹500</div></div>
+          </div>
+          <div class="phone-total">
+            <div class="phone-total-txt">💰 कुल:</div>
+            <div class="phone-total-amt">₹7963</div>
+          </div>
+          <div class="phone-actions">
+            <div class="phone-act green">📤 शेयर</div>
+            <div class="phone-act teal">📱 QR</div>
+            <div class="phone-act dark">💾 सेव</div>
+          </div>
+          <div class="phone-nav">
+            <div class="phone-nav-item">🏠 होम</div>
+            <div class="phone-nav-item active">➕ लिस्ट</div>
+            <div class="phone-nav-item">📅 इतिहास</div>
+            <div class="phone-nav-item">⭐ रिपोर्ट</div>
+            <div class="phone-nav-item">⚙️ सेटिंग</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-wave">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 80">
+      <path fill="#ffffff" d="M0,40L48,45C96,50,192,60,288,58C384,56,480,42,576,38C672,34,768,40,864,46C960,52,1056,58,1152,55C1248,52,1344,42,1392,37L1440,32L1440,80L0,80Z"></path>
+    </svg>
+  </div>
+</section>
+
+<!-- STRIP -->
+<div class="features-strip">
+  <div class="strip-item"><span class="strip-icon">🎤</span> Voice Commands</div>
+  <div class="strip-item"><span class="strip-icon">📸</span> OCR Paper Scan</div>
+  <div class="strip-item"><span class="strip-icon">📱</span> QR Code Sharing</div>
+  <div class="strip-item"><span class="strip-icon">💰</span> Budget Tracker</div>
+  <div class="strip-item"><span class="strip-icon">📊</span> Monthly Reports</div>
+  <div class="strip-item"><span class="strip-icon">🔔</span> Weekly Reminders</div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-image fade-up">
+        <img src="feature_assest.png" alt="E-Rashan – Smart Grocery List & Budget Manager">
+        <div class="about-image-badge">🇮🇳 <span>Hindi Support</span> · Offline Ready</div>
+      </div>
+      <div class="fade-up">
+        <div class="section-tag">About the App</div>
+        <h2 class="section-title">Your <span>Smart Ration</span> Shopping Assistant</h2>
+        <p class="section-sub">E-Rashan helps you plan your monthly ration, manage your grocery budget, and share your list with the shopkeeper via QR code. Smart, simple, and offline.</p>
+        <div class="about-features">
+          <div class="about-feat">
+            <div class="feat-icon gold">🛒</div>
+            <div class="feat-text"><h4>100+ Pre-loaded Items</h4><p>100+ grocery items across 8 categories — Grains, Pulses, Spices, Kitchen, Dairy, Beverages, Snacks & more.</p></div>
+          </div>
+          <div class="about-feat">
+            <div class="feat-icon green">🗣️</div>
+            <div class="feat-text"><h4>Hindi Voice Commands</h4><p>Just say "उड़द दाल" and it's added! Full voice input support in Hindi language.</p></div>
+          </div>
+          <div class="about-feat">
+            <div class="feat-icon teal">📴</div>
+            <div class="feat-text"><h4>Works Offline — 100% Free</h4><p>No internet, no login, no subscription. Your data stays on your device, always.</p></div>
+          </div>
+          <div class="about-feat">
+            <div class="feat-icon navy">📱</div>
+            <div class="feat-text"><h4>QR Code for Shopkeeper</h4><p>Generate a QR code — show to your shopkeeper so they scan and see your full order instantly.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-tag">Features</div>
+      <h2 class="section-title">Everything to <span>Shop Smarter</span></h2>
+      <p class="section-sub">From creating your first list to tracking your yearly grocery spend — E-Rashan covers it all.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card c1 fade-up">
+        <div class="feat-card-icon">🛒</div>
+        <h3>Smart Grocery List</h3>
+        <p>Choose from 100+ pre-loaded items across 8 categories — Grains (अनाज), Pulses (दालें), Spices (मसाले), Kitchen (रसोई), Dairy, Beverages, Snacks & more. Add quantity and price to auto-calculate totals.</p>
+      </div>
+      <div class="feat-card c2 fade-up">
+        <div class="feat-card-icon">🎤</div>
+        <h3>Voice Input (Hindi)</h3>
+        <p>Speak in Hindi — say "2 किलो चावल" and it's added instantly. Hands-free grocery planning for the whole family.</p>
+      </div>
+      <div class="feat-card c3 fade-up">
+        <div class="feat-card-icon">📱</div>
+        <h3>QR Code Sharing</h3>
+        <p>Generate a QR code from your saved order. Show it to your kirana shopkeeper — they scan and see your full list instantly.</p>
+      </div>
+      <div class="feat-card c4 fade-up">
+        <div class="feat-card-icon">📸</div>
+        <h3>OCR Paper Scan</h3>
+        <p>Have a handwritten ration list? Take a photo and our OCR auto-detects and imports items into your digital list.</p>
+      </div>
+      <div class="feat-card c5 fade-up">
+        <div class="feat-card-icon">💰</div>
+        <h3>Budget Tracker</h3>
+        <p>Set a monthly grocery budget and track spending in real-time. Visual progress bar shows how much is left — stay in control.</p>
+      </div>
+      <div class="feat-card c6 fade-up">
+        <div class="feat-card-icon">📊</div>
+        <h3>Reports & History</h3>
+        <p>Full order history, monthly spending trends, and annual reports. Re-order any past list with a single tap.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-tag">How It Works</div>
+      <h2 class="section-title">Ready in <span>4 Simple Steps</span></h2>
+      <p class="section-sub">From opening the app to handing your order to the shopkeeper — less than 2 minutes.</p>
+    </div>
+    <div class="steps">
+      <div class="step fade-up">
+        <div class="step-num">1</div>
+        <h4>Open & Create List</h4>
+        <p>Tap "नई लिस्ट बनाएं" on the home screen to start a fresh grocery list.</p>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">2</div>
+        <h4>Select Items & Prices</h4>
+        <p>Browse categories or search/speak items. Enter quantity and price per unit — totals auto-calculate.</p>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">3</div>
+        <h4>Save or Share</h4>
+        <p>Save to history, share via WhatsApp, or generate a QR for your shopkeeper to scan.</p>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">4</div>
+        <h4>Track & Report</h4>
+        <p>View monthly spending, compare trends, set budgets, and repeat orders with one tap.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCREENSHOTS -->
+<section class="screens" id="screens">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-tag">Screenshots</div>
+      <h2 class="section-title">See the App <span>in Action</span></h2>
+      <p class="section-sub">Clean, intuitive design built for everyday Indian grocery shopping.</p>
+    </div>
+    <div class="screens-grid">
+      <!-- Home -->
+      <div class="screen-card fade-up">
+        <div class="screen-shot">
+          <div class="mini-screen">
+            <div class="mini-header">
+              <div style="font-size:1rem;font-weight:900;color:#fff;"><span style="color:#f5a623">E</span>-Rashan</div>
+              <div style="font-size:0.5rem;color:rgba(255,255,255,0.6);font-family:'Noto Sans Devanagari',sans-serif;">आपकी स्मार्ट राशन लिस्ट</div>
+            </div>
+            <div style="padding:10px 8px;display:flex;flex-direction:column;gap:7px;background:#0d1257;min-height:160px;">
+              <div style="background:#3f51b5;border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:6px;"><span>✏️</span><div style="font-size:0.52rem;font-weight:800;color:#fff;font-family:'Noto Sans Devanagari',sans-serif;">नई लिस्ट बनाएं</div></div>
+              <div style="background:#2e7d32;border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:6px;"><span>🔄</span><div style="font-size:0.52rem;font-weight:800;color:#fff;font-family:'Noto Sans Devanagari',sans-serif;">पिछला ऑर्डर दोहराएं</div></div>
+              <div style="background:#7b1fa2;border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:6px;"><span>📋</span><div style="font-size:0.52rem;font-weight:800;color:#fff;font-family:'Noto Sans Devanagari',sans-serif;">पुराने ऑर्डर देखें</div></div>
+              <div style="background:#bf360c;border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:6px;"><span>📷</span><div style="font-size:0.52rem;font-weight:800;color:#fff;font-family:'Noto Sans Devanagari',sans-serif;">कागज़ स्कैन करें</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label"><h4>Home Screen</h4><p>All main actions at a glance</p></div>
+      </div>
+      <!-- List -->
+      <div class="screen-card fade-up">
+        <div class="screen-shot">
+          <div class="mini-screen">
+            <div class="mini-header">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div style="font-size:0.85rem;font-weight:900;color:#fff;"><span style="color:#f5a623">E</span>-राशन</div>
+                <div style="font-size:0.42rem;color:#f5a623;font-weight:700;">💰 बजट</div>
+              </div>
+            </div>
+            <div class="mini-green-bar"><div class="mini-bar-txt">✅ चुने गए: 3</div><div class="mini-bar-amt">₹450</div></div>
+            <div class="mini-body">
+              <div class="mini-item"><div class="mini-check"></div><div class="mini-name">🫘 उड़द दाल</div><div class="mini-price">₹50</div></div>
+              <div class="mini-item"><div class="mini-check"></div><div class="mini-name">🟢 मूंग दाल</div><div class="mini-price">₹150</div></div>
+              <div class="mini-item"><div class="mini-check"></div><div class="mini-name">🌾 बेसन</div><div class="mini-price">₹250</div></div>
+            </div>
+            <div class="mini-footer">
+              <div class="mini-btn g">📤 शेयर</div>
+              <div class="mini-btn t">📱 QR</div>
+              <div class="mini-btn d">💾 सेव</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label"><h4>Grocery List</h4><p>Select items, prices auto-calculate</p></div>
+      </div>
+      <!-- QR -->
+      <div class="screen-card fade-up">
+        <div class="screen-shot">
+          <div class="mini-screen">
+            <div class="mini-header">
+              <div style="font-size:0.65rem;font-weight:800;color:#fff;font-family:'Noto Sans Devanagari',sans-serif;">दुकानदार को दिखाएं</div>
+            </div>
+            <div style="padding:10px 8px;background:#fff;text-align:center;">
+              <div style="font-size:0.48rem;font-weight:800;color:#1a237e;margin-bottom:6px;font-family:'Noto Sans Devanagari',sans-serif;">📱 QR स्कैन करें</div>
+              <svg width="80" height="80" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" style="background:#fff;border:2px solid #000;border-radius:4px;">
+                <rect x="1" y="1" width="7" height="7" fill="none" stroke="#000" stroke-width="1"/>
+                <rect x="3" y="3" width="3" height="3" fill="#000"/>
+                <rect x="13" y="1" width="7" height="7" fill="none" stroke="#000" stroke-width="1"/>
+                <rect x="15" y="3" width="3" height="3" fill="#000"/>
+                <rect x="1" y="13" width="7" height="7" fill="none" stroke="#000" stroke-width="1"/>
+                <rect x="3" y="15" width="3" height="3" fill="#000"/>
+                <rect x="9" y="1" width="2" height="2" fill="#000"/>
+                <rect x="9" y="5" width="3" height="2" fill="#000"/>
+                <rect x="13" y="9" width="2" height="4" fill="#000"/>
+                <rect x="9" y="9" width="3" height="3" fill="#000"/>
+                <rect x="15" y="13" width="3" height="3" fill="#000"/>
+                <rect x="9" y="15" width="2" height="5" fill="#000"/>
+              </svg>
+              <div style="font-size:0.42rem;color:#666;margin-top:6px;font-family:'Noto Sans Devanagari',sans-serif;">ऑर्डर #2 · 6 आइटम · ₹7963</div>
+              <div style="margin-top:8px;background:#1a237e;border-radius:8px;padding:4px 10px;display:inline-block;">
+                <div style="font-size:0.48rem;color:#fff;font-weight:800;font-family:'Noto Sans Devanagari',sans-serif;">बंद करें</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label"><h4>QR Code</h4><p>Shopkeeper scans to see your full order</p></div>
+      </div>
+      <!-- Report -->
+      <div class="screen-card fade-up">
+        <div class="screen-shot">
+          <div class="mini-screen">
+            <div class="mini-header">
+              <div style="font-size:0.7rem;font-weight:900;color:#fff;"><span style="color:#f5a623">E</span>-Rashan रिपोर्ट</div>
+              <div style="font-size:0.44rem;color:rgba(255,255,255,0.6);font-family:'Noto Sans Devanagari',sans-serif;">2 कुल ऑर्डर</div>
+            </div>
+            <div style="padding:0;background:#f8f4ff;">
+              <div style="background:#fff;margin:6px;border-radius:8px;padding:6px;display:flex;justify-content:space-around;">
+                <div style="text-align:center;"><div style="font-size:0.6rem;font-weight:900;color:#1a237e;">2</div><div style="font-size:0.38rem;color:#666;font-family:'Noto Sans Devanagari',sans-serif;">ऑर्डर</div></div>
+                <div style="text-align:center;"><div style="font-size:0.6rem;font-weight:900;color:#1a237e;">9</div><div style="font-size:0.38rem;color:#666;font-family:'Noto Sans Devanagari',sans-serif;">आइटम</div></div>
+                <div style="text-align:center;"><div style="font-size:0.6rem;font-weight:900;color:#2e7d32;">₹8413</div><div style="font-size:0.38rem;color:#666;font-family:'Noto Sans Devanagari',sans-serif;">खर्च</div></div>
+              </div>
+              <div style="margin:0 6px 6px;background:#fffde7;border-radius:7px;padding:6px 8px;">
+                <div style="font-size:0.44rem;font-weight:700;color:#1a237e;font-family:'Noto Sans Devanagari',sans-serif;">💰 बजट ट्रैकर – Mar 2026</div>
+                <div style="font-size:0.62rem;font-weight:900;color:#2e7d32;">₹8413</div>
+                <div style="height:4px;background:#e0e0e0;border-radius:2px;margin-top:3px;"><div style="height:4px;background:#2196f3;border-radius:2px;width:75%;"></div></div>
+              </div>
+              <div style="margin:0 6px;background:#e8f5e9;border-radius:7px;padding:6px 8px;">
+                <div style="font-size:0.44rem;font-weight:700;color:#1a237e;font-family:'Noto Sans Devanagari',sans-serif;">📊 मासिक खर्च ट्रेंड</div>
+                <div style="font-size:0.4rem;color:#666;margin-top:2px;">Mar 2026 · ₹8413</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label"><h4>Reports & Budget</h4><p>Monthly trends, budget tracker & annual data</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-inner">
+    <div class="fade-up" style="text-align:center;">
+      <div class="section-tag">User Reviews</div>
+      <h2 class="section-title">Loved by <span>Indian Families</span></h2>
+      <p class="section-sub" style="margin:0 auto;">Real feedback from households who shop with E-Rashan every month.</p>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card fade-up">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"बहुत अच्छा ऐप है! अब हर महीने नई लिस्ट नहीं बनानी पड़ती — बस पुराना ऑर्डर दोहरा देती हूं। QR कोड वाला फीचर कमाल का है!"</p>
+        <div class="testi-author"><div class="testi-avatar ta1">S</div><div><div class="testi-name">Sunita Devi</div><div class="testi-loc">Haryana, India</div></div></div>
+      </div>
+      <div class="testi-card fade-up">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"The budget tracker is exactly what my family needed. We used to overspend on groceries every month. Now we stay within our ₹5000 limit easily."</p>
+        <div class="testi-author"><div class="testi-avatar ta2">R</div><div><div class="testi-name">Ramesh Kumar</div><div class="testi-loc">Delhi, India</div></div></div>
+      </div>
+      <div class="testi-card fade-up">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Voice input में हिंदी में बोलता हूं और सब add हो जाता है। Shopkeeper को QR दिखाना बड़ा convenient है — कागज़ की ज़रूरत नहीं!"</p>
+        <div class="testi-author"><div class="testi-avatar ta3">M</div><div><div class="testi-name">Mohan Lal</div><div class="testi-loc">Rajasthan, India</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section class="download" id="download">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-tag">Free Download</div>
+      <h2 class="section-title">Download <span>E-Rashan</span> Today</h2>
+      <p class="section-sub">Join thousands of Indian families who shop smarter. Free forever, no ads, no login required.</p>
+      <div class="dl-btns">
+        <a href="https://play.google.com/store/apps/details?id=com.chhavi.e_rashan&hl=en_IN" target="_blank" class="dl-btn-main">▶ &nbsp; Get it on Google Play</a>
+        <a href="#screens" class="dl-badge">📸 &nbsp; View Screenshots</a>
+      </div>
+      <div class="dl-features">
+        <div class="dl-feat"><span class="dl-feat-icon">✅</span>100% Free</div>
+        <div class="dl-feat"><span class="dl-feat-icon">📴</span>Works Offline</div>
+        <div class="dl-feat"><span class="dl-feat-icon">🔒</span>No Login</div>
+        <div class="dl-feat"><span class="dl-feat-icon">🚫</span>No Ads</div>
+        <div class="dl-feat"><span class="dl-feat-icon">🇮🇳</span>Hindi Support</div>
+        <div class="dl-feat"><span class="dl-feat-icon">📱</span>Android App</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo"><span>E</span>-Rashan</div>
+  <div class="footer-tagline">आपकी स्मार्ट राशन लिस्ट · ई-राशन · Your Smart Grocery List</div>
+  <div class="footer-links">
+    <a href="#about">About</a>
+    <a href="#features">Features</a>
+    <a href="#how">How It Works</a>
+    <a href="#screens">Screenshots</a>
+    <a href="#download">Download</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="footer-bottom">© 2026 <span>E-Rashan</span>. Made with ❤️ in India. All rights reserved.</div>
+</footer>
+
+<script>
+// Scroll fade-in
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+// Mobile menu
+function toggleMenu() {
+  const links = document.querySelector('.nav-links');
+  if(links.style.display === 'flex') {
+    links.style.display = '';
+  } else {
+    links.style.cssText = 'display:flex;flex-direction:column;position:fixed;top:60px;left:0;right:0;background:#0d1257;padding:20px 24px;gap:16px;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,0.3);';
+  }
+}
+
+// Highlight nav on scroll
+window.addEventListener('scroll', () => {
+  const sections = document.querySelectorAll('section[id]');
+  let cur = '';
+  sections.forEach(s => { if(window.scrollY >= s.offsetTop - 100) cur = s.id; });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.style.color = a.getAttribute('href') === '#'+cur ? '#f5a623' : '';
+  });
+});
+</script>
+</body>
+</html>
